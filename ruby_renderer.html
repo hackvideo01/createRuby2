@@ -208,8 +208,8 @@
     </div>
   </div>
 
-  <!-- Sử dụng kuromoji.js từ local -->
-  <script src="dict/kuromoji.js"></script>
+  <!-- Sử dụng kuromoji.js từ CDN jsDelivr (không cần local server) -->
+  <script src="https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
     const inputText = document.getElementById('inputText');
@@ -348,12 +348,12 @@
 
     function initTokenizer() {
       if (!window.kuromoji) {
-        setStatus('Không tải được kuromoji.js. Vui lòng kiểm tra file trong thư mục dict/.', true);
+        setStatus('Không tải được kuromoji.js. Vui lòng kiểm tra kết nối mạng.', true);
         return;
       }
 
       kuromoji.builder({
-        dicPath: 'dict/'
+        dicPath: 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/'
       }).build((err, builtTokenizer) => {
         if (err) {
           console.error(err);
