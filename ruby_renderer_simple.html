@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tạo Ruby cho Kanji (Phiên bản đơn giản)</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #eef4fb;
+      color: #111827;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 24px auto;
+      padding: 0 20px;
+    }
+
+    .panel {
+      background: #ffffff;
+      border: 1px solid #dbe3ee;
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    h1 {
+      margin: 0 0 18px;
+      font-size: 28px;
+    }
+
+    .label {
+      display: block;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      border: 1px solid #cfd8e3;
+      border-radius: 18px;
+      padding: 18px;
+      font-size: 30px;
+      line-height: 1.7;
+      outline: none;
+      background: #fff;
+    }
+
+    textarea:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.25);
+    }
+
+    .input-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .input-group {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 16px;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 20px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .primary {
+      background: #0f172a;
+      color: #fff;
+    }
+
+    .secondary {
+      background: #f3f4f6;
+      color: #111827;
+      border: 1px solid #d1d5db;
+    }
+
+    .status {
+      font-size: 15px;
+      color: #4b5563;
+    }
+
+    .error {
+      color: #b91c1c;
+      font-weight: 600;
+    }
+
+    .capture-wrap {
+      margin-top: 22px;
+    }
+
+    .output-stage {
+      background: #dcecfb;
+      border: 1px solid #b8d4ee;
+      border-radius: 28px;
+      min-height: 640px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px;
+      overflow: hidden;
+    }
+
+    .output-text {
+      text-align: center;
+      font-size: 72px;
+      line-height: 1.7;
+      font-weight: 700;
+      color: #000;
+      word-break: break-word;
+    }
+
+    ruby {
+      ruby-position: over;
+      margin: 0 2px;
+    }
+
+    rt {
+      font-size: 0.28em;
+      font-weight: 500;
+      color: #374151;
+      letter-spacing: 0.02em;
+      user-select: none;
+    }
+
+    .preview-box {
+      margin-top: 18px;
+      display: none;
+    }
+
+    .preview-box.show {
+      display: block;
+    }
+
+    .preview-box img {
+      display: block;
+      width: 100%;
+      max-width: 720px;
+      border: 1px solid #d1d5db;
+      border-radius: 16px;
+      background: #fff;
+    }
+
+    .preview-box a {
+      display: inline-block;
+      margin-top: 10px;
+      color: #1d4ed8;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .small-note {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .instruction {
+      background: #fef3c7;
+      border: 1px solid #fbbf24;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+
+    .instruction strong {
+      color: #92400e;
+    }
+
+    @media (max-width: 900px) {
+      textarea { font-size: 24px; }
+      .output-stage { min-height: 420px; padding: 28px; }
+      .output-text { font-size: 42px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="panel">
+      <h1>Tạo ruby cho câu tiếng Nhật (Phiên bản thủ công)</h1>
+      
+      <div class="instruction">
+        <strong>Hướng dẫn:</strong> Nhập kanji/từ vào ô bên trái, nhập furigana (hiragana) vào ô bên phải. 
+        Mỗi dòng tương ứng với một từ. Phần còn lại sẽ được giữ nguyên.
+      </div>
+
+      <div class="input-group">
+        <div>
+          <label class="label" for="kanjiText">Kanji/Từ (mỗi từ 1 dòng)</label>
+          <textarea id="kanjiText" placeholder="明日&#10;東京&#10;行">明日
+東京
+行</textarea>
+        </div>
+        <div>
+          <label class="label" for="readingText">Furigana (hiragana, mỗi dòng 1 reading)</label>
+          <textarea id="readingText" placeholder="あした&#10;とうきょう&#10;い">あした
+とうきょう
+い</textarea>
+        </div>
+      </div>
+
+      <label class="label" for="inputText">Câu hoàn chỉnh</label>
+      <textarea id="inputText" placeholder="明日は東京へ行きます。">明日は東京へ行きます。</textarea>
+
+      <div class="actions">
+        <button id="renderBtn" class="primary">Tạo ruby</button>
+        <button id="clearBtn" class="secondary">Xoá</button>
+        <button id="captureBtn" class="secondary">Chụp màn hình</button>
+        <span id="status" class="status">Sẵn sàng</span>
+      </div>
+
+      <div class="capture-wrap">
+        <div id="captureArea" class="output-stage">
+          <div id="output" class="output-text">明日は東京へ行きます。</div>
+        </div>
+
+        <div id="previewBox" class="preview-box">
+          <div class="small-note">Ảnh chụp màn hình:</div>
+          <img id="previewImage" alt="Screenshot preview" />
+          <a id="downloadLink" download="ruby-screen.png">Tải ảnh PNG</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    const kanjiText = document.getElementById('kanjiText');
+    const readingText = document.getElementById('readingText');
+    const inputText = document.getElementById('inputText');
+    const output = document.getElementById('output');
+    const renderBtn = document.getElementById('renderBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const captureBtn = document.getElementById('captureBtn');
+    const statusEl = document.getElementById('status');
+    const captureArea = document.getElementById('captureArea');
+    const previewBox = document.getElementById('previewBox');
+    const previewImage = document.getElementById('previewImage');
+    const downloadLink = document.getElementById('downloadLink');
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function renderRuby() {
+      const kanjis = kanjiText.value.split('\n').map(s => s.trim()).filter(s => s);
+      const readings = readingText.value.split('\n').map(s => s.trim()).filter(s => s);
+      let text = inputText.value.trim();
+
+      if (!text) {
+        output.textContent = 'ここに表示されます。';
+        setStatus('Vui lòng nhập câu tiếng Nhật.', true);
+        return;
+      }
+
+      if (kanjis.length === 0) {
+        output.textContent = text;
+        setStatus('Không có kanji/từ nào được nhập. Hiển thị text thường.');
+        return;
+      }
+
+      try {
+        // Thay thế kanji bằng ruby tag
+        for (let i = 0; i < kanjis.length; i++) {
+          const kanji = kanjis[i];
+          const reading = readings[i] || '';
+          
+          if (kanji && reading) {
+            const rubyTag = `<ruby>${escapeHtml(kanji)}<rt>${escapeHtml(reading)}</rt></ruby>`;
+            text = text.replace(kanji, rubyTag);
+          }
+        }
+
+        output.innerHTML = text;
+        setStatus('Đã tạo ruby thành công!');
+      } catch (error) {
+        console.error(error);
+        output.textContent = inputText.value;
+        setStatus('Lỗi khi tạo ruby. Hiển thị text thường.', true);
+      }
+    }
+
+    function setStatus(message, isError = false) {
+      statusEl.textContent = message;
+      statusEl.className = isError ? 'status error' : 'status';
+    }
+
+    async function captureScreen() {
+      if (!window.html2canvas) {
+        setStatus('Không tải được html2canvas. Vui lòng kiểm tra kết nối mạng.', true);
+        return;
+      }
+
+      try {
+        setStatus('Đang chụp màn hình...');
+        const canvas = await html2canvas(captureArea, {
+          backgroundColor: null,
+          scale: 2,
+          useCORS: true
+        });
+
+        const dataUrl = canvas.toDataURL('image/png');
+        previewImage.src = dataUrl;
+        downloadLink.href = dataUrl;
+        previewBox.classList.add('show');
+        setStatus('Đã chụp màn hình xong.');
+      } catch (error) {
+        console.error(error);
+        setStatus('Không thể chụp màn hình.', true);
+      }
+    }
+
+    renderBtn.addEventListener('click', renderRuby);
+    
+    clearBtn.addEventListener('click', () => {
+      kanjiText.value = '明日\n東京\n行';
+      readingText.value = 'あした\nとうきょう\nい';
+      inputText.value = '明日は東京へ行きます。';
+      output.textContent = '明日は東京へ行きます。';
+      previewBox.classList.remove('show');
+      setStatus('Đã reset về mặc định.');
+    });
+    
+    captureBtn.addEventListener('click', captureScreen);
+
+    inputText.addEventListener('keydown', (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+        renderRuby();
+      }
+    });
+
+    // Render mặc định
+    renderRuby();
+  </script>
+</body>
+</html>

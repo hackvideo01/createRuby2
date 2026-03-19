@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Examples - Ruby Renderer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .example {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #333;
+      border-bottom: 2px solid #0066cc;
+      padding-bottom: 10px;
+    }
+    .input {
+      background: #f0f0f0;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+      font-size: 18px;
+    }
+    .expected {
+      padding: 10px;
+      border-left: 4px solid #00cc66;
+      margin: 10px 0;
+      font-size: 18px;
+    }
+    ruby {
+      ruby-position: over;
+      margin: 0 2px;
+    }
+    rt {
+      font-size: 0.5em;
+      color: #666;
+    }
+    .note {
+      color: #666;
+      font-size: 14px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 Test Examples cho Ruby Renderer</h1>
+  
+  <div class="example">
+    <h2>Test 1: Câu có kanji + hiragana</h2>
+    <div class="input">
+      <strong>Input:</strong> 明日は東京へ行きます。
+    </div>
+    <div class="expected">
+      <strong>Kết quả mong đợi:</strong><br>
+      <ruby>明日<rt>あした</rt></ruby>は<ruby>東京<rt>とうきょう</rt></ruby>へ<ruby>行<rt>い</rt></ruby>きます。
+    </div>
+    <div class="note">
+      ✅ Chỉ kanji (明日, 東京, 行) có furigana<br>
+      ✅ Hiragana (は, へ, きます, 。) giữ nguyên
+    </div>
+  </div>
+
+  <div class="example">
+    <h2>Test 2: Câu toàn hiragana</h2>
+    <div class="input">
+      <strong>Input:</strong> ありがとうございます。
+    </div>
+    <div class="expected">
+      <strong>Kết quả mong đợi:</strong><br>
+      ありがとうございます。
+    </div>
+    <div class="note">
+      ✅ Không có kanji → không có ruby tag nào
+    </div>
+  </div>
+
+  <div class="example">
+    <h2>Test 3: Câu phức tạp</h2>
+    <div class="input">
+      <strong>Input:</strong> 今日は良い天気ですね。
+    </div>
+    <div class="expected">
+      <strong>Kết quả mong đợi:</strong><br>
+      <ruby>今日<rt>きょう</rt></ruby>は<ruby>良<rt>よ</rt></ruby>い<ruby>天気<rt>てんき</rt></ruby>ですね。
+    </div>
+    <div class="note">
+      ✅ Kanji (今日, 良, 天気) có furigana<br>
+      ✅ Hiragana (は, い, ですね, 。) không có ruby
+    </div>
+  </div>
+
+  <div class="example">
+    <h2>Test 4: Câu có katakana</h2>
+    <div class="input">
+      <strong>Input:</strong> 私はコーヒーが好きです。
+    </div>
+    <div class="expected">
+      <strong>Kết quả mong đợi:</strong><br>
+      <ruby>私<rt>わたし</rt></ruby>はコーヒーが<ruby>好<rt>す</rt></ruby>きです。
+    </div>
+    <div class="note">
+      ✅ Kanji (私, 好) có furigana<br>
+      ✅ Katakana (コーヒー) giữ nguyên không có ruby
+    </div>
+  </div>
+
+  <div class="example">
+    <h2>Test 5: Câu có số và ký tự đặc biệt</h2>
+    <div class="input">
+      <strong>Input:</strong> 2024年3月19日に日本へ行きます！
+    </div>
+    <div class="expected">
+      <strong>Kết quả mong đợi:</strong><br>
+      2024<ruby>年<rt>ねん</rt></ruby>3<ruby>月<rt>がつ</rt></ruby>19<ruby>日<rt>にち</rt></ruby>に<ruby>日本<rt>にほん</rt></ruby>へ<ruby>行<rt>い</rt></ruby>きます！
+    </div>
+    <div class="note">
+      ✅ Số (2024, 3, 19) và dấu (！) giữ nguyên<br>
+      ✅ Chỉ kanji (年, 月, 日, 日本, 行) có furigana
+    </div>
+  </div>
+
+  <hr style="margin: 40px 0;">
+  
+  <div style="text-align: center;">
+    <p><strong>Để test:</strong></p>
+    <p>Copy các câu input ở trên vào <code>ruby_renderer.html</code> và nhấn "Tạo ruby"</p>
+    <a href="ruby_renderer.html" style="display: inline-block; padding: 12px 24px; background: #0066cc; color: white; text-decoration: none; border-radius: 6px; margin-top: 10px;">
+      Mở Ruby Renderer
+    </a>
+  </div>
+</body>
+</html>
