@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Japanese Ruby (16:9)</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <h1 class="title">Hiển thị tiếng Nhật + Ruby (Furigana)</h1>
+        <p class="subtitle">Nhập 1 câu tiếng Nhật bên dưới, hệ thống sẽ tạo ruby tự động.</p>
+      </header>
+
+      <section class="controls" aria-label="Input">
+        <label class="label" for="jpInput">Input (1 câu tiếng Nhật)</label>
+        <textarea
+          id="jpInput"
+          class="input"
+          rows="2"
+          placeholder="例：明日は東京へ行きます。"
+          autocomplete="off"
+          spellcheck="false"
+        ></textarea>
+        <div class="row">
+          <button id="renderBtn" class="btn" type="button">Tạo ruby</button>
+          <button id="clearBtn" class="btn secondary" type="button">Xoá</button>
+          <span id="status" class="status" role="status" aria-live="polite"></span>
+        </div>
+      </section>
+
+      <section class="stageWrap" aria-label="16:9 stage">
+        <div class="stage" id="stage">
+          <div class="jpText" id="output" aria-label="Japanese output"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Load libraries for auto furigana -->
+    <script src="https://unpkg.com/kuromoji@0.1.2/build/kuromoji.js"></script>
+    <script src="https://unpkg.com/kuroshiro@1.2.0/dist/kuroshiro.min.js"></script>
+    <script src="https://unpkg.com/kuroshiro-analyzer-kuromoji@1.1.0/dist/kuroshiro-analyzer-kuromoji.min.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
